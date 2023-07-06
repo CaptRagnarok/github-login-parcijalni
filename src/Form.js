@@ -15,12 +15,12 @@ const Form = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Reset previous data and error
+    // Resetira prošle podatke
     setUserData(null);
     setRepos([]);
     setError(null);
 
-    // Perform user data API request
+    // Dohvaća Github podatke ili baca error
     fetch(`https://api.github.com/users/${username}`)
       .then((response) => {
         if (response.ok) {
@@ -32,7 +32,7 @@ const Form = () => {
       .then((data) => {
         setUserData(data);
         console.log(data);
-        // Perform repositories API request
+        // Dohvaća repoe ili baca error (error ne bi trebao biti ako je user dohvaćen)
         return fetch(`https://api.github.com/users/${username}/repos`);
       })
       .then((response) => {
@@ -51,17 +51,29 @@ const Form = () => {
       });
   };
 
+  const reset = () => {
+    setUsername('');
+    setUserData(null);
+    setRepos([]);
+    setError(null);
+  };
+
   return (
     <form onSubmit={handleSubmit}>
-      <label htmlFor="username">Enter GitHub username: </label>
+      <label htmlFor="username"></label>
       <input
         type="text"
         id="username"
         name="username"
         value={username}
+        placeholder="Enter GitHub username"
         onChange={handleInputChange}
       />
+      <br />
       <button type="submit">Search</button>
+      <button type="button" onClick={reset}>
+        Reset
+      </button>
       {userData && <UserData userData={userData} />}
       {repos.length > 0 && <Repos repos={repos} />}
       {error && <p>Error: {error}</p>}
